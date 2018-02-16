@@ -19,9 +19,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_main.*
 
-private const val SIGN_IN_CODE = 1
-
 class MainActivity: AppCompatActivity() {
+    companion object {
+        private const val SIGN_IN_CODE = 1
+    }
+
     private var contacts: List<Contact> = listOf(
             Contact("Eric Romrell", R.drawable.eric_romrell, "BYU OIT", "Programmer", "eric_romrell@byu.edu", "503-679-0157", "Jessica", "2244 N Canyon Road #106, Provo, UT 84604", "This is me. I am a master's student at BYU part-time, while working full time as a mobile and web service developer. I really enjoy my job, but outside of working, I love playing tennis!"),
             Contact("Jessica Romrell", R.drawable.jessica_romrell, "Self-Employed", "Independent Contractor", "jessica_romrell@gmail.com", "801-678-1400", "Eric", "123 ABC St.", "This is my lovely wife. She is a lot of fun to be around, and really enjoys her new job!"),
