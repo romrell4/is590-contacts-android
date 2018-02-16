@@ -2,4 +2,6 @@
 	<string name="app_name">Contacts</string>
 	<string name="photo">Photo</string>
 	<string name="bioHeader">Bio</string>
+	<string name="log_in">Log In</string>
+	<string name="log_out">Log Out</string>
 </resources>

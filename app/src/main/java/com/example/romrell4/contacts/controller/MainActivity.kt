@@ -5,15 +5,21 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.romrell4.contacts.R
 import com.example.romrell4.contacts.model.Contact
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import kotlinx.android.synthetic.main.activity_main.*
+
+private const val SIGN_IN_CODE = 1
 
 class MainActivity: AppCompatActivity() {
     private var contacts: List<Contact> = listOf(
@@ -24,6 +30,7 @@ class MainActivity: AppCompatActivity() {
             Contact("Bill Nye", R.drawable.bill_nye, "Unemployed", null, "bill_ney@thescienceguy.com", null, "Blair", null, "This is a biography that will hopefully take up a couple of lines..."),
             Contact("Bill Gates", R.drawable.bill_gates, "Microsoft", "CEO", "bill_gates@hotmail.com", null, "Melinda", "1835 73rd Ave NE, Medina, WA 98039", "This is a biography that will hopefully take up a couple of lines...")
     )
+    private lateinit var signInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +42,38 @@ class MainActivity: AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = ContactsAdapter()
+
+        //Login config
+        signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build())
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.login_menu, menu)
+        //Hide either the log in or log out item
+        menu?.getItem(if (GoogleSignIn.getLastSignedInAccount(this) == null) 1 else 0)?.isVisible = false
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?) = when(item?.itemId) {
+        R.id.login -> {
+            startActivityForResult(signInClient.signInIntent, SIGN_IN_CODE)
+            true
+        }
+        R.id.logout -> {
+            signInClient.signOut().addOnCompleteListener { invalidateOptionsMenu() }
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            SIGN_IN_CODE -> {
+                invalidateOptionsMenu()
+            }
+        }
     }
 
     inner class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.ContactViewHolder>() {
@@ -58,7 +97,11 @@ class MainActivity: AppCompatActivity() {
                 imageView.setImageDrawable(resources.getDrawable(contact.imageRes ?: R.drawable.ic_person_black_24dp, null))
                 textView.text = contact.name
                 itemView.setOnClickListener {
-                    startActivity(Intent(this@MainActivity, ContactDetailActivity::class.java).putExtra(ContactDetailActivity.CONTACT, contact))
+                    if (GoogleSignIn.getLastSignedInAccount(this@MainActivity) != null) {
+                        startActivity(Intent(this@MainActivity, ContactDetailActivity::class.java).putExtra(ContactDetailActivity.CONTACT, contact))
+                    } else {
+                        Toast.makeText(this@MainActivity, "Please log in to view contact details", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
