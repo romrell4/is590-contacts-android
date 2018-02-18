@@ -4,4 +4,14 @@
 	<string name="bioHeader">Bio</string>
 	<string name="log_in">Log In</string>
 	<string name="log_out">Log Out</string>
+	<string name="edit">Edit</string>
+	<string name="done">Done</string>
+	<string name="nameLabel">Name</string>
+	<string name="companyLabel">Company</string>
+	<string name="positionLabel">Position</string>
+	<string name="emailLabel">Email</string>
+	<string name="phoneLabel">Phone</string>
+	<string name="spouseLabel">Spouse</string>
+	<string name="addressLabel">Address</string>
+	<string name="bioLabel">Bio</string>
 </resources>

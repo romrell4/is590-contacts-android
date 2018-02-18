@@ -8,4 +8,39 @@
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
 
+	<style name="ContactDetailRow">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+
+	<style name="ContactDetailRowLabel">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginStart">8dp</item>
+		<item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+		<!--<item name="android:textColor">@android:color/black</item>-->
+	</style>
+
+	<style name="ContactDetailRowViewSwitcher">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_gravity">end</item>
+		<item name="android:layout_marginStart">8dp</item>
+		<item name="android:layout_marginEnd">8dp</item>
+	</style>
+
+	<style name="ContactDetailRowDetail">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_gravity">center_vertical|end</item>
+		<item name="android:gravity">end</item>
+	</style>
+
+	<style name="ContactDetailRowTextView" parent="ContactDetailRowDetail">
+
+	</style>
+
+	<style name="ContactDetailRowEditText" parent="ContactDetailRowDetail">
+		<item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+	</style>
 </resources>

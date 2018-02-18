@@ -1,5 +1,6 @@
 package com.example.romrell4.contacts.model
 
+import android.graphics.Bitmap
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -7,15 +8,16 @@ import android.os.Parcelable
  * Created by romrell4 on 2/2/18
  */
 data class Contact(
-        var name: String,
+        var name: CharSequence,
         var imageRes: Int?,
-        var company: String?,
-        var position: String?,
-        var email: String?,
-        var cellPhone: String?,
-        var spouseName: String?,
-        var address: String?,
-        var bio: String?
+        var company: CharSequence?,
+        var position: CharSequence?,
+        var email: CharSequence?,
+        var cellPhone: CharSequence?,
+        var spouseName: CharSequence?,
+        var address: CharSequence?,
+        var bio: CharSequence?,
+        var bitmap: Bitmap? = null
 ): Parcelable {
     constructor(parcel: Parcel): this(
             parcel.readString(),
@@ -26,19 +28,21 @@ data class Contact(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString()) {
+            parcel.readString(),
+            parcel.readParcelable(Bitmap::class.java.classLoader)) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
+        parcel.writeString(name.toString())
         parcel.writeValue(imageRes)
-        parcel.writeString(company)
-        parcel.writeString(position)
-        parcel.writeString(email)
-        parcel.writeString(cellPhone)
-        parcel.writeString(spouseName)
-        parcel.writeString(address)
-        parcel.writeString(bio)
+        parcel.writeString(company?.toString())
+        parcel.writeString(position?.toString())
+        parcel.writeString(email?.toString())
+        parcel.writeString(cellPhone?.toString())
+        parcel.writeString(spouseName?.toString())
+        parcel.writeString(address?.toString())
+        parcel.writeString(bio?.toString())
+        parcel.writeParcelable(bitmap, flags)
     }
 
     override fun describeContents(): Int {
@@ -54,4 +58,5 @@ data class Contact(
             return arrayOfNulls(size)
         }
     }
+
 }

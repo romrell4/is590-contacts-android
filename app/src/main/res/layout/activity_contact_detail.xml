@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -7,47 +7,312 @@
 	android:layout_height="match_parent"
 	tools:context="com.example.romrell4.contacts.controller.ContactDetailActivity">
 
-	<android.support.v7.widget.CardView
-		android:id="@+id/imageCardView"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
+		android:orientation="vertical"
+		>
 
-		<ImageView
-			android:id="@+id/imageView"
-			android:layout_width="150dp"
-			android:layout_height="150dp"
-			android:contentDescription="@string/photo"
-			android:scaleType="centerCrop"
+		<android.support.v7.widget.CardView
+			android:id="@+id/imageCardView"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:srcCompat="@drawable/ic_person_black_24dp" />
-	</android.support.v7.widget.CardView>
+			app:layout_constraintTop_toTopOf="parent">
 
-	<android.support.v7.widget.CardView
-		android:id="@+id/recyclerCardView"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		android:layout_margin="8dp"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/imageCardView">
+			<ImageView
+				android:id="@+id/imageView"
+				android:layout_width="150dp"
+				android:layout_height="150dp"
+				android:contentDescription="@string/photo"
+				android:scaleType="centerCrop"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent"
+				app:srcCompat="@drawable/ic_person_black_24dp" />
+		</android.support.v7.widget.CardView>
 
-		<android.support.v7.widget.RecyclerView
-			android:id="@+id/recyclerView"
+		<android.support.v7.widget.CardView
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:background="@android:color/white"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.0"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/imageView"
-			tools:listitem="@layout/contact_detail_row" />
-	</android.support.v7.widget.CardView>
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp">
 
-</android.support.constraint.ConstraintLayout>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/nameLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/nameEditText"
+						android:text="@string/nameLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/nameViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/nameLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/nameTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test name" />
+
+						<EditText
+							android:id="@+id/nameEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textPersonName" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/companyLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/companyEditText"
+						android:text="@string/companyLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/companyViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/companyLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/companyTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test company" />
+
+						<EditText
+							android:id="@+id/companyEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textCapWords" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/positionLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/positionEditText"
+						android:text="@string/positionLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/positionViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/positionLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/positionTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test position" />
+
+						<EditText
+							android:id="@+id/positionEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textCapWords" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/emailLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/emailEditText"
+						android:text="@string/emailLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/emailViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/emailLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/emailTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test email" />
+
+						<EditText
+							android:id="@+id/emailEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textEmailAddress" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/phoneLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/phoneEditText"
+						android:text="@string/phoneLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/phoneViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/phoneLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/phoneTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test phone" />
+
+						<EditText
+							android:id="@+id/phoneEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="phone" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/spouseLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/spouseEditText"
+						android:text="@string/spouseLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/spouseViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/spouseLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/spouseTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test spouse" />
+
+						<EditText
+							android:id="@+id/spouseEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textCapWords" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+
+				<android.support.constraint.ConstraintLayout style="@style/ContactDetailRow">
+
+					<TextView
+						android:id="@+id/addressLabel"
+						style="@style/ContactDetailRowLabel"
+						android:labelFor="@id/addressEditText"
+						android:text="@string/addressLabel"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
+
+					<ViewSwitcher
+						android:id="@+id/addressViewSwitcher"
+						style="@style/ContactDetailRowViewSwitcher"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintHorizontal_bias="1.0"
+						app:layout_constraintStart_toEndOf="@+id/addressLabel"
+						app:layout_constraintTop_toTopOf="parent">
+
+						<TextView
+							android:id="@+id/addressTextView"
+							style="@style/ContactDetailRowTextView"
+							tools:text="Test address" />
+
+						<EditText
+							android:id="@+id/addressEditText"
+							style="@style/ContactDetailRowEditText"
+							android:inputType="textCapWords" />
+					</ViewSwitcher>
+				</android.support.constraint.ConstraintLayout>
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+
+		<android.support.v7.widget.CardView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="8dp">
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+				<TextView
+					android:id="@+id/bioLabel"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_horizontal"
+					android:labelFor="@id/bioEditText"
+					android:text="@string/bioLabel"
+					android:textAppearance="@style/TextAppearance.AppCompat.Large"
+					/>
+
+				<TextSwitcher
+					android:id="@+id/bioViewSwitcher"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+					<TextView
+						android:id="@+id/bioTextView"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_margin="8dp"
+						tools:text="Test Bio" />
+
+					<EditText
+						android:id="@+id/bioEditText"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_margin="8dp"
+						android:textAppearance="@style/TextAppearance.AppCompat.Small"
+						android:inputType="textCapSentences"
+						/>
+				</TextSwitcher>
+			</LinearLayout>
+		</android.support.v7.widget.CardView>
+	</LinearLayout>
+</ScrollView>

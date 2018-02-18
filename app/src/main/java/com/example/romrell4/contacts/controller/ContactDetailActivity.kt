@@ -1,130 +1,148 @@
 package com.example.romrell4.contacts.controller
 
-import android.content.ActivityNotFoundException
-import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
-import android.support.v7.app.AppCompatActivity
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.support.v7.app.AppCompatActivity
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import com.example.romrell4.contacts.R
 import com.example.romrell4.contacts.model.Contact
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.android.synthetic.main.activity_contact_detail.*
+import android.provider.MediaStore
+import android.content.Intent
+import android.graphics.Bitmap
+
 
 class ContactDetailActivity: AppCompatActivity() {
     companion object {
-        const val CONTACT = "Contact";
+        const val CONTACT = "Contact"
+        const val TAKE_PICTURE_CODE = 1
     }
 
-    lateinit var list: List<Triple<String, String?, DetailItemType>>
+    private lateinit var contact: Contact
+    private var editing: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidateOptionsMenu()
+                toggleViewSwitchers()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contact_detail)
 
-        val contact = intent.getParcelableExtra<Contact>(CONTACT)
+        contact = intent.getParcelableExtra(CONTACT)
 
-        imageView.setImageDrawable(getDrawable(contact.imageRes ?: R.drawable.ic_person_black_24dp))
-
-        list = listOf(
-                Triple("Name", contact.name, DetailItemType.DISPLAY_ONLY),
-                Triple("Company", contact.company, DetailItemType.DISPLAY_ONLY),
-                Triple("Position", contact.position, DetailItemType.DISPLAY_ONLY),
-                Triple("Email", contact.email, DetailItemType.EMAIL),
-                Triple("Phone", contact.cellPhone, DetailItemType.PHONE),
-                Triple("Spouse", contact.spouseName, DetailItemType.DISPLAY_ONLY),
-                Triple("Address", contact.address, DetailItemType.DISPLAY_ONLY),
-                Triple("Bio", contact.bio, DetailItemType.MULTILINE)
-        )
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ContactDetailAdapter()
-    }
-
-    enum class DetailItemType(val viewType: Int) {
-        DISPLAY_ONLY(R.layout.contact_detail_row),
-        PHONE(R.layout.contact_detail_row),
-        EMAIL(R.layout.contact_detail_row),
-        MULTILINE(R.layout.contact_bio_row)
-    }
-
-    inner class ContactDetailAdapter: RecyclerView.Adapter<BindableViewHolder>() {
-
-        override fun getItemCount(): Int {
-            return list.size
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return list[position].third.viewType
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BindableViewHolder {
-            if (viewType == R.layout.contact_bio_row) {
-                return ContactBioViewHolder(LayoutInflater.from(this@ContactDetailActivity).inflate(viewType, parent, false))
-            } else {
-                return ContactDetailViewHolder(LayoutInflater.from(this@ContactDetailActivity).inflate(viewType, parent, false))
-            }
-        }
-
-        override fun onBindViewHolder(holder: BindableViewHolder?, position: Int) {
-            holder?.bind(list[position])
-        }
-
-        inner class ContactDetailViewHolder(view: View): BindableViewHolder(view) {
-            val textView = itemView.findViewById<TextView>(R.id.textView)
-            val detailTextView = itemView.findViewById<TextView>(R.id.detailTextView)
-
-            override fun bind(value: Triple<String, String?, DetailItemType>) {
-                textView.text = value.first
-                detailTextView.text = value.second
-                when (value.third) {
-                    DetailItemType.PHONE -> itemView.setOnClickListener {
-                        val options = arrayOf("Call", "Text")
-                        AlertDialog.Builder(this@ContactDetailActivity)
-                                .setTitle("Contact Options")
-                                .setItems(options, { _, i ->
-                                    when (i) {
-                                        0 -> startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${value.second}")))
-                                        1 -> {
-                                            try {
-                                                startActivity(Intent(Intent.ACTION_SEND, Uri.parse("sms:${value.second}")))
-                                            } catch (e: ActivityNotFoundException) {
-                                                Toast.makeText(this@ContactDetailActivity, "No sms client installed", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                    }
-                                })
-                                .show()
-                    }
-                    DetailItemType.EMAIL -> itemView.setOnClickListener {
-                        try {
-                            startActivity(Intent(Intent.ACTION_SEND).putExtra(Intent.EXTRA_EMAIL, value.second))
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(this@ContactDetailActivity, "No email client installed", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    else -> {}
+        imageView.setOnClickListener {
+            if (editing) {
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                takePictureIntent.resolveActivity(packageManager)?.let {
+                    startActivityForResult(takePictureIntent, TAKE_PICTURE_CODE)
                 }
             }
         }
 
-        inner class ContactBioViewHolder(view: View): BindableViewHolder(view) {
-            val bioTextView = itemView.findViewById<TextView>(R.id.bioTextView)
+        setupUI()
+    }
 
-            override fun bind(value: Triple<String, String?, DetailItemType>) {
-                bioTextView.text = value.second
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (contact.email == GoogleSignIn.getLastSignedInAccount(this)?.email) {
+            menuInflater.inflate(R.menu.edit_menu, menu)
+
+            //Hide either the edit or done item
+            menu?.getItem(if (editing) 0 else 1)?.isVisible = false
+            return true
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
+        R.id.edit -> {
+            editing = true
+            true
+        }
+        R.id.done -> {
+            if (currentFocus != null) {
+                (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(currentFocus.windowToken, 0)
             }
+            updateContactFromUI()
+            setupUI()
+            editing = false
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == TAKE_PICTURE_CODE && resultCode == Activity.RESULT_OK) {
+            (data?.extras?.get("data") as? Bitmap)?.let {
+                contact.bitmap = it
+                imageView.setImageBitmap(it)
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    abstract class BindableViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        abstract fun bind(value: Triple<String, String?, DetailItemType>)
+    private fun setupUI() {
+        if (contact.bitmap != null) {
+            imageView.setImageBitmap(contact.bitmap)
+        } else {
+            imageView.setImageDrawable(getDrawable(contact.imageRes ?: R.drawable.ic_person_black_24dp))
+        }
+        nameTextView.text = contact.name
+        companyTextView.text = contact.company
+        positionTextView.text = contact.position
+        emailTextView.text = contact.email
+        phoneTextView.text = contact.cellPhone
+        spouseTextView.text = contact.spouseName
+        addressTextView.text = contact.address
+        bioTextView.text = contact.bio
+
+        nameEditText.hint = contact.name
+        companyEditText.hint = contact.company
+        positionEditText.hint = contact.position
+        emailEditText.hint = contact.email
+        phoneEditText.hint = contact.cellPhone
+        spouseEditText.hint = contact.spouseName
+        addressEditText.hint = contact.address
+        bioEditText.hint = contact.bio
+    }
+
+    private fun updateContactFromUI() {
+        if (nameEditText.text.isNotEmpty()) contact.name = nameEditText.text
+        if (companyEditText.text.isNotEmpty()) contact.company = companyEditText.text
+        if (positionEditText.text.isNotEmpty()) contact.position = positionEditText.text
+        if (emailEditText.text.isNotEmpty()) contact.email = emailEditText.text
+        if (phoneEditText.text.isNotEmpty()) contact.cellPhone = phoneEditText.text
+        if (spouseEditText.text.isNotEmpty()) contact.spouseName = spouseEditText.text
+        if (addressEditText.text.isNotEmpty()) contact.address = addressEditText.text
+        if (bioEditText.text.isNotEmpty()) contact.bio = bioEditText.text
+    }
+
+    private fun toggleViewSwitchers() {
+        if (editing) {
+            nameViewSwitcher.showNext()
+            companyViewSwitcher.showNext()
+            positionViewSwitcher.showNext()
+            emailViewSwitcher.showNext()
+            phoneViewSwitcher.showNext()
+            spouseViewSwitcher.showNext()
+            addressViewSwitcher.showNext()
+            bioViewSwitcher.showNext()
+        } else {
+            nameViewSwitcher.showPrevious()
+            companyViewSwitcher.showPrevious()
+            positionViewSwitcher.showPrevious()
+            emailViewSwitcher.showPrevious()
+            phoneViewSwitcher.showPrevious()
+            spouseViewSwitcher.showPrevious()
+            addressViewSwitcher.showPrevious()
+            bioViewSwitcher.showPrevious()
+        }
     }
 }
